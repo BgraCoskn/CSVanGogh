@@ -1,0 +1,17 @@
+Skip out on matlab entirely.
+Use pandas and matplotlib to create the plots and ask the user if he/she wants to merge
+any of the plots and then output them as png.
+
+Use express mode to use all csv files in child directories?
+>> No.
+
+Found v:n csv files in child directories. Use them all?
+>> No.
+
+Choose which ones to use, here are the files:
+f:lists files
+>> 10, 8, 2
+
+[1] Merge datasets and handle all the data at once (duplicate data label warning).
+[2] Handle the datasets separately.
+
