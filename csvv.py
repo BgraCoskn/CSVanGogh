@@ -173,7 +173,7 @@ class csvfile:
 					cols = l_num.split(',')
 					if len(cols) == self.colcount and\
 					not lst_hasnumeric(cols):
-						break	
+						break
 			colnames = list()
 			for colname in cols:
 				colname = colname.title()
@@ -183,8 +183,8 @@ class csvfile:
 				
 			self.data = self.data.set_axis(colnames, axis=1)
 
-		self.xseries = csvdf.pop('Name') # Remove the name columns (timeseries)
-		print(csvdf)
+		#self.xseries = csvdf.pop('Name') # Remove the name columns (timeseries)
+		#print(csvdf)
 
 
 class dataset(csvfile):
@@ -194,7 +194,8 @@ def _main_(csvfs):
 	if csvfs == 1:
 		print("Chosen [none] exiting.")
 		return 0
-	for cv in csvfs 
+	for cv in csvfs:
+		print(csvfile(cv))
 
 
 _main_(_init_())
