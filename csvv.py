@@ -112,6 +112,25 @@ def _main_(csvfs):
                 if lstobj[ind].data[colname].sum() == 0:
                     lstobj[ind].data.pop(colname)
         print(lstobj[ind].data.head())
+        print("Column names are: ")
+        print(lstobj[ind].data.columns)
+        while(True):
+            rnmcol=input(\
+            "Do you want to rename any of them? [no, 1, 2,...]\n>>")
+            if rnmcol.isnumeric():
+                if int(rnmcol) <= len(lstobj[ind].data.columns)\
+                and int(rnmcol) > 0:
+                    nwname = input("Input new name:\n>>")
+                    lstobj[ind].data.rename(\
+                    columns={lstobj[ind].data.columns[int(rnmcol)-1]:nwname},\
+                    inplace=True)
+            elif rnmcol == "no": break
+            else:
+                print("Wrong input, try again")
+                continue
+        print(lstobj[ind].data.columns)
+
+
 
 _main_(_init_())
 
@@ -120,7 +139,6 @@ _main_(_init_())
 
 # There is an error with validinps being references before assignment check
 # that out.
-
 
 
 
