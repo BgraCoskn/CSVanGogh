@@ -99,14 +99,19 @@ def _main_(csvfs):
         cvobj = lstobj[ind]
         print(cvobj)
         while(True):
-            poptm = input("What column should be used as timeseries?")
+            poptm = input("What column should be used as the time series?\n>>")
             try:
                 lstobj[ind].poptime(poptm)
             except KeyError:
                 print("Wrong key, try again")
                 continue
             break
-        print(lstobj[ind].data)
+        print(lstobj[ind].data.head())
+        if input("Remove columns with only zeros? [y/n]\n>>") == 'y':
+            for colname in lstobj[ind].data.columns:
+                if lstobj[ind].data[colname].sum() == 0:
+                    lstobj[ind].data.pop(colname)
+        print(lstobj[ind].data.head())
 
 _main_(_init_())
 
