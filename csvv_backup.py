@@ -24,7 +24,7 @@ def _init_():
         ind+=1
         print(str(ind)+"> " + thecsv)
     print("\nWhich ones do you want to use?\
-            \n(none, all or index numbers seperated by spaces eg. 2 10 3)")
+           \n(none, all or index numbers seperated by spaces eg. 2 10 3)")
 
     while True:
         validinps = list()
@@ -53,23 +53,22 @@ def lst_hasnumeric(lst):
         summ += int(el.isnumeric())
     return bool(summ)
 
-class csvf:
+class csvfile:
 
     def __init__(self, filepath):
-        headpad = 30; footpad = 20
-        self.name = os.path.basename(filepath)
+        headpad = 30; footpad = 50
         self.data = pd.read_csv(filepath,\
-                engine='python', skiprows=headpad, skipfooter=footpad)
+        engine='python', skiprows=headpad, skipfooter=footpad)
         self.colcount = len(self.data.columns)
         self.rowcount = len(self.data)
 
         with open(filepath) as wf:
-            # read the file to find the column names,
+        # read the file to find the column names,
         # if the read lines length is the same as the
         # body and is only strings
         # loop over lines in a file
             for pos, l_num in enumerate(wf):
-                # check if the line number is specified in the lines to read array
+            # check if the line number is specified in the lines to read array
                 cols = l_num.split(',')
                 if len(cols) == self.colcount and\
                 not lst_hasnumeric(cols):
@@ -82,31 +81,20 @@ class csvf:
                 colnames.append(colname)
 
             self.data = self.data.set_axis(colnames, axis=1)
-            print(self.data)
-    
-    def poptime(self,popcol):
-        self.timeser = self.data.pop(popcol)
+
+                #print(csvdf)
+
+
+class dataset(csvfile):
+    pass
 
 def _main_(csvfs):
     if csvfs == 1:
         print("Chosen [none] exiting.")
         return 0
-    
-    lstobj = [0 for x in range(len(csvfs))] 
-    for ind in range(0,len(csvfs)):
-        cv = csvfs[ind]
-        lstobj[ind] = csvf(cv)
-        cvobj = lstobj[ind]
-        print(cvobj)
-        while(True):
-            poptm = input("What column should be used as timeseries?")
-            try:
-                lstobj[ind].poptime(poptm)
-            except KeyError:
-                print("Wrong key, try again")
-                continue
-            break
-        print(lstobj[ind].data)
+    for cv in csvfs:
+        print(csvfile(cv))
+
 
 _main_(_init_())
 

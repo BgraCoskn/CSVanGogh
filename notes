@@ -15,3 +15,13 @@ f:lists files
 [1] Merge datasets and handle all the data at once (duplicate data label warning).
 [2] Handle the datasets separately.
 
+
+Always put the units on the dataset, store the appropriate units based on the
+name.
+If the dataset units are higher than a thousand divide them before putting
+them into the plot and write the factor besides the unit.
+
+When holding on the plots on top of each other
+create multiple scales and also
+Store the actual names for the column names
+
