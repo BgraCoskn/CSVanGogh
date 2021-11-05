@@ -2,7 +2,7 @@ import os.path
 import pandas as pd
 import numpy as np
 from pathlib import Path
-import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 def find_all(name, path):
     result = []
@@ -85,7 +85,35 @@ class csvf:
             print(self.data)
     
     def poptime(self,popcol):
-        self.timeser = self.data.pop(popcol)
+        # If there is a column to be used as time series
+        if popcol != "":
+            self.timeser = self.data.pop(popcol)
+
+
+class pltcls:
+    
+    def __init__(self, dataset):
+        sumcol = ""
+        nmint = 0
+
+        for coln in dataset.columns:
+            sumcol += coln
+        for char in sumcol:
+            nmint += ord(char)
+
+        self.name = str(nmint)
+        self.fig, self.axs = plt.subplots(figsize=(20,20))
+        self.ds = dataset
+        self.ds.plot()
+        # self.fig.savefig(self.name+".png")
+        # Don't know why but the first figure is blank and when saving
+        # the figure that's creating problems as the program is not saving
+        # the actual figure because of the blank one, well
+        # auto saving isn't that necessary, it's possible to let the user
+        # decide what figures it wants to save
+        print("Created plot object: " + self.name)
+
+
 
 def _main_(csvfs):
     if csvfs == 1:
@@ -129,6 +157,35 @@ def _main_(csvfs):
                 print("Wrong input, try again")
                 continue
         print(lstobj[ind].data.columns)
+
+        print(\
+            "What columns do you want to plot together?"+\
+            "\nWrite the column names you want to group seperated by commas"+\
+            "\nAnd seperate the groups with spaces"+\
+            "\nExample: XTorque,Xspeed YTorque,Yspeed")
+
+
+        while True:
+            wrongkey = 0 # Wrong input flag
+            grps = input(">> ") # groups input
+
+            if grps != "":
+                for grp in grps.split():
+                    for col in grp.split(','):
+                        if not col in lstobj[ind].data.columns:
+                            # If even one of the columns entered by the user
+                            # doesn't match the data in the object then raise a
+                            # flag and continue the infinite loop
+                            wrongkey = 1
+
+            if wrongkey == 0: break # no false input entered, break out the loop
+            print("False input, try again")
+            continue
+        pltobj = [0 for x in range(len(grps))]
+        for grpn, grp in enumerate(grps.split()):
+            pltobj[grpn] = pltcls(lstobj[ind].data[grp.split(',')])
+            plt.show()
+
 
 
 
