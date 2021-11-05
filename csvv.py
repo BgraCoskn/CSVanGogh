@@ -54,6 +54,12 @@ def lst_hasnumeric(lst):
     return bool(summ)
 
 class csvf:
+    """
+        CSV file class,
+        inputs = string type, path to CSV file
+        methods =
+            poptime #
+    """
 
     def __init__(self, filepath):
         headpad = 30; footpad = 20
@@ -91,28 +97,34 @@ class csvf:
 
 
 class pltcls:
-    
+    """
+        Plot class
+        inputs: Pandas.DataFrame
+        methods:
+            set_title: sets title for the plot
+            set_labels: sets axis labels
+    """
     def __init__(self, dataset):
         sumcol = ""
         nmint = 0
 
         for coln in dataset.columns:
-            sumcol += coln
+            sumcol += coln.title()
         for char in sumcol:
             nmint += ord(char)
-
+        self.nn = sumcol + "_plot"
         self.name = str(nmint)
         self.fig, self.axs = plt.subplots(figsize=(20,20))
-        self.ds = dataset
-        self.ds.plot(ax=self.axs)
-        # self.fig.savefig(self.name+".png")
-        # Don't know why but the first figure is blank and when saving
-        # the figure that's creating problems as the program is not saving
-        # the actual figure because of the blank one, well
-        # auto saving isn't that necessary, it's possible to let the user
-        # decide what figures it wants to save
+        self.dataset = dataset
+        self.dataset.plot(ax=self.axs)
         print("Created plot object: " + self.name)
 
+    def set_title(self, titlestr):
+        # set the title for the plot
+        self.axs.set_title(titlestr)
+
+    def save(self):
+        self.fig.savefig(self.name+".png")
 
 def _main_(csvfs):
     if csvfs == 1:
@@ -125,7 +137,8 @@ def _main_(csvfs):
         lstobj[ind] = csvf(cv)
         cvobj = lstobj[ind]
         print(cvobj)
-        while(True):
+
+        while True :
             poptm = input("What column should be used as the time series?\n>>")
             try:
                 lstobj[ind].poptime(poptm)
@@ -133,6 +146,7 @@ def _main_(csvfs):
                 print("Wrong key, try again")
                 continue
             break
+
         print(lstobj[ind].data.head())
         if input("Remove columns with only zeros? [y/n]\n>>") == 'y':
             for colname in lstobj[ind].data.columns:
@@ -141,7 +155,8 @@ def _main_(csvfs):
         print(lstobj[ind].data.head())
         print("Column names are: ")
         print(lstobj[ind].data.columns)
-        while(True):
+
+        while True :
             rnmcol=input(\
             "Do you want to rename any of them? [no, 1, 2,...]\n>>")
             if rnmcol.isnumeric():
@@ -173,17 +188,25 @@ def _main_(csvfs):
                     for col in grp.split(','):
                         if not col in lstobj[ind].data.columns:
                             # If even one of the columns entered by the user
-                            # doesn't match the data in the object then raise a
+                            # doesn't match The data in the object then raise a
                             # flag and continue the infinite loop
                             wrongkey = 1
 
             if wrongkey == 0: break # no false input entered, break out the loop
             print("False input, try again")
             continue
+
+        # Create the plot objects
         pltobj = [0 for x in range(len(grps))]
         for grpn, grp in enumerate(grps.split()):
             pltobj[grpn] = pltcls(lstobj[ind].data[grp.split(',')])
-            plt.show()
+            figtitle = input("Do you want to give a title to "+\
+                pltobj[grpn].nn + "?" + "\nLeave empty if no." + ">> ")
+            if figtitle != "":
+                pltobj[grpn].set_title(figtitle)
+
+            pltobj[grpn].save()
+            #plt.show()
 
 
 
@@ -192,9 +215,6 @@ _main_(_init_())
 
 # Find the files with the last 3 letters csv instead of searching for
 # any with csv.
-
-# There is an error with validinps being references before assignment check
-# that out.
 
 
 
