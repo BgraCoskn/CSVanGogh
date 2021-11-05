@@ -83,7 +83,7 @@ class csvf:
 
             self.data = self.data.set_axis(colnames, axis=1)
             print(self.data)
-    
+
     def poptime(self,popcol):
         # If there is a column to be used as time series
         if popcol != "":
@@ -104,7 +104,7 @@ class pltcls:
         self.name = str(nmint)
         self.fig, self.axs = plt.subplots(figsize=(20,20))
         self.ds = dataset
-        self.ds.plot()
+        self.ds.plot(ax=self.axs)
         # self.fig.savefig(self.name+".png")
         # Don't know why but the first figure is blank and when saving
         # the figure that's creating problems as the program is not saving
@@ -114,13 +114,12 @@ class pltcls:
         print("Created plot object: " + self.name)
 
 
-
 def _main_(csvfs):
     if csvfs == 1:
         print("Chosen [none] exiting.")
         return 0
-    
-    lstobj = [0 for x in range(len(csvfs))] 
+
+    lstobj = [0 for x in range(len(csvfs))]
     for ind in range(0,len(csvfs)):
         cv = csvfs[ind]
         lstobj[ind] = csvf(cv)
