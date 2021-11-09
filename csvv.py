@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+pd.options.plotting.backend = "plotly"
 
 def find_all(name, path):
     result = []
@@ -210,6 +212,11 @@ def _main_(csvfs):
 
 
 
+fig = go.Figure(
+    data=[go.Bar(y=[2, 1, 3])],
+   layout_title_text="A Figure Displayed with fig.show()"
+)
+fig.show()
 
 _main_(_init_())
 
