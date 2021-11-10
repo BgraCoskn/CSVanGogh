@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
 
 def lst_hasnumeric(lst):
     # Check if list has any numeric values
@@ -39,7 +41,7 @@ class csvf:
                 colname = colname.replace('\n', '')
                 colname = colname.replace('_', '')
                 colnames.append(colname)
-
+            print(colnames)
             self.data = self.data.set_axis(colnames, axis=1)
             print(self.data)
 
@@ -58,14 +60,28 @@ class pltcls:
         figdata = tuple()
         self.name = str(nmint)
         self.df = dataobj
+        self.timeser = [*range(0,len(dataobj))] #TimeSeries scale it down
         datalst = [0 for x in range(len(cols))] 
         
-        for ind, col in enumerate(cols):
-            datalst[ind] = dataobj[col].tolist()
+        self.fig = make_subplots(specs=[[{"secondary_y":True}]])
         
-        self.cdf = pd.DataFrame(datalst).T # create new dataframe from lists
-        self.cdf = self.cdf.set_axis(cols, axis=1) # rename the columns
-        self.fig = px.line(self.cdf) 
+        for ind, col in enumerate(cols):
+            if ind == len(cols)-1: secy = True
+            else: secy = False
+
+            self.fig.add_trace(
+                go.Scatter(
+                    x=self.timeser, y=dataobj[col].tolist(),
+                    name=col), secondary_y=secy
+                )
+            
+
+            #datalst[ind] = dataobj[col].tolist()
+
+
+        #self.cdf = pd.DataFrame(datalst).T # create new dataframe from lists
+        #self.cdf = self.cdf.set_axis(cols, axis=1) # rename the columns
+        #self.fig = px.line(self.cdf) 
         
         # It works, it seems the x and y parameters in the function is
         # for choosing the columns from the dataframe and it was throwing
@@ -80,21 +96,13 @@ class pltcls:
         # Check: Is there automatic scaling for multiple datasets
         # Check: How can there be multiple y-scales
 
-    def update(self):
-        self.fig.update_layout(
-                autosize=True,
-                showlegend=True,
-                showline=True,
-                showgrid=True,
-                showticklabels=True,
-                ticks='outside')
             
     def _show_(self):
         self.fig.show()
 
 thefile = "Test1_Kuzey_Platform_Esneme.csv"
 thedata = csvf(thefile)
-theplot = pltcls(thedata.data, ["Motorposx","Motorposy"])
+theplot = pltcls(thedata.data, ["Motorposx","Motorposy", "XactualDegree", "YactualDegree"])
 # Its show time
 theplot._show_()
 
