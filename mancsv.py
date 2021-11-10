@@ -3,7 +3,12 @@ import os
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.io as pio
+import http.server
+import socketserver
 
+PORT = 8080
+Handler = http.server.SimpleHTTPRequestHandler
 
 def lst_hasnumeric(lst):
     # Check if list has any numeric values
@@ -61,7 +66,7 @@ class pltcls:
         self.name = str(nmint)
         self.df = dataobj
         self.timeser = [*range(0,len(dataobj))] # Timeseries
-        self.timeser = [x/1000 for x in self.timeser] # Scaling down timeseries
+        self.timeser = [x/100 for x in self.timeser] # Scaling down timeseries
         datalst = [0 for x in range(len(cols))]
 
         self.fig = make_subplots(specs=[[{"secondary_y":True}]])
@@ -101,15 +106,30 @@ class pltcls:
     def _show_(self):
         self.fig.show()
 
-csv_file= "Test1_Kuzey_Platform_Esneme.csv"
-thedata = csvf(csv_file)
-print(thedata.colnames)
-chosen = ["Motorposx","Motorposy", "XactualDegree", "YactualDegree"]
-figlabels = ["Motor pozisyonu ve Inklinometre açısı",
-        "Zaman(s)","MotorPoz", "InklinometreDeg"]
-theplot = pltcls(thedata.data, chosen)
-theplot.update(figlabels[0], figlabels[1], figlabels[2], figlabels[3])
-# Its show time
-theplot._show_()
+def main(csv_file, ch_cols, figlabels):
 
+    """
+        Put the csv file in the same directory as the code.
+        First run the code after writing the csv file to be opened.
+        It will give an error as there are no appropriate columns in the
+        parameters. Find the names of the data columns you want to use in
+        the terminal output. Write these names into the source script and
+        run it again. You should see the plot coming up in your browser.
+    """
+
+    csv_data= csvf(csv_file)
+    print(csv_data.colnames)
+    theplot = pltcls(csv_data.data, ch_cols)
+    theplot.update(figlabels[0], figlabels[1], figlabels[2], figlabels[3])
+    # Its show time
+    theplot._show_()
+    pio.write_html(theplot.fig, file='index.html', auto_open=True)
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print("Plot serving at", PORT)
+        httpd.serve_forever()
+# Example
+main("Test1_Kuzey_Platform_Esneme.csv",
+    ["Motorposx","Motorposy", "XactualDegree", "YactualDegree"],
+    ["Motor pozisyonu ve Inklinometre açısı",
+        "Zaman(s)","MotorPoz", "InklinometreDeg"])
 
