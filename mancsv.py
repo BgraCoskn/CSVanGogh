@@ -41,14 +41,14 @@ class csvf:
                 colname = colname.replace('\n', '')
                 colname = colname.replace('_', '')
                 colnames.append(colname)
-            print(colnames)
+            self.colnames = colnames
             self.data = self.data.set_axis(colnames, axis=1)
             print(self.data)
 
 class pltcls:
-    
+
     def __init__(self, dataobj, cols):
-        
+
         sumcol = ""
         nmint = 0
 
@@ -60,13 +60,14 @@ class pltcls:
         figdata = tuple()
         self.name = str(nmint)
         self.df = dataobj
-        self.timeser = [*range(0,len(dataobj))] #TimeSeries scale it down
-        datalst = [0 for x in range(len(cols))] 
-        
+        self.timeser = [*range(0,len(dataobj))] # Timeseries
+        self.timeser = [x/1000 for x in self.timeser] # Scaling down timeseries
+        datalst = [0 for x in range(len(cols))]
+
         self.fig = make_subplots(specs=[[{"secondary_y":True}]])
-        
+
         for ind, col in enumerate(cols):
-            if ind == len(cols)-1: secy = True
+            if ind >= len(cols)-2: secy = True
             else: secy = False
 
             self.fig.add_trace(
@@ -74,15 +75,7 @@ class pltcls:
                     x=self.timeser, y=dataobj[col].tolist(),
                     name=col), secondary_y=secy
                 )
-            
 
-            #datalst[ind] = dataobj[col].tolist()
-
-
-        #self.cdf = pd.DataFrame(datalst).T # create new dataframe from lists
-        #self.cdf = self.cdf.set_axis(cols, axis=1) # rename the columns
-        #self.fig = px.line(self.cdf) 
-        
         # It works, it seems the x and y parameters in the function is
         # for choosing the columns from the dataframe and it was throwing
         # an error because there was no such column.
@@ -96,13 +89,26 @@ class pltcls:
         # Check: Is there automatic scaling for multiple datasets
         # Check: How can there be multiple y-scales
 
-            
+    def update(self,
+            fig_title, fig_xlabel, fig_ylabel, fig_ylabel2=None, ):
+        
+        self.fig.update_layout(title_text=fig_title)
+        self.fig.update_xaxes(title_text=fig_xlabel)
+        self.fig.update_yaxes(title_text=fig_ylabel, secondary_y=False)
+        if fig_ylabel2 != None:
+            self.fig.update_yaxes(title_text=fig_ylabel2, secondary_y=True)
+
     def _show_(self):
         self.fig.show()
 
-thefile = "Test1_Kuzey_Platform_Esneme.csv"
-thedata = csvf(thefile)
-theplot = pltcls(thedata.data, ["Motorposx","Motorposy", "XactualDegree", "YactualDegree"])
+csv_file= "Test1_Kuzey_Platform_Esneme.csv"
+thedata = csvf(csv_file)
+print(thedata.colnames)
+chosen = ["Motorposx","Motorposy", "XactualDegree", "YactualDegree"]
+figlabels = ["Motor pozisyonu ve Inklinometre açısı",
+        "Zaman(s)","MotorPoz", "InklinometreDeg"]
+theplot = pltcls(thedata.data, chosen)
+theplot.update(figlabels[0], figlabels[1], figlabels[2], figlabels[3])
 # Its show time
 theplot._show_()
 
